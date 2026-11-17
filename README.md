@@ -1,4 +1,4 @@
-# Ali K. El-Massri
+# Atomity Cms
 
 Open-source CMS for the content that sits next to a product: **news**, **career openings**,
 **documentation** and **knowledge-base** articles.
