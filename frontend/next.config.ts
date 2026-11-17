@@ -1,7 +1,7 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  output: "standalone",
+  output: process.env.AMPLIFY_MONOREPO_APP_ROOT ? undefined : "standalone",
   turbopack: {
     root: process.cwd(),
     rules: {
