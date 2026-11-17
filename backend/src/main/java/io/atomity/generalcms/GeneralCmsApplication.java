@@ -1,0 +1,11 @@
+package io.atomity.generalcms;
+
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+
+@SpringBootApplication
+public class GeneralCmsApplication {
+    public static void main(String[] args) {
+        SpringApplication.run(GeneralCmsApplication.class, args);
+    }
+}
