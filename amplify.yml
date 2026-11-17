@@ -1,0 +1,22 @@
+version: 1
+applications:
+  - appRoot: frontend
+    env:
+      variables:
+        AMPLIFY_MONOREPO_APP_ROOT: frontend
+    frontend:
+      phases:
+        preBuild:
+          commands:
+            - npm ci
+        build:
+          commands:
+            - test -n "$BACKEND_API_URL" || { echo "Set BACKEND_API_URL to the HTTPS API origin"; exit 1; }
+            - npm run check
+      artifacts:
+        baseDirectory: .next
+        files:
+          - "**/*"
+      cache:
+        paths:
+          - node_modules/**/*

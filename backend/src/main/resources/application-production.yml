@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
+cms:
+  admin-password-hash: ${ADMIN_PASSWORD_HASH}
+  jwt-secret: ${JWT_SECRET}
+  media-storage-dir: ${MEDIA_STORAGE_DIR:/data/media}
+  public-base-url: ${CMS_PUBLIC_BASE_URL}

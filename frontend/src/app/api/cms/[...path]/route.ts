@@ -2,23 +2,58 @@ import { NextRequest, NextResponse } from "next/server";
 
 type RouteContext = { params: Promise<{ path: string[] }> };
 
+function getBackendUrl() {
+  const configuredUrl = process.env.BACKEND_API_URL;
+  if (!configuredUrl) {
+    return process.env.NODE_ENV === "production" ? null : "http://localhost:8080";
+  }
+  try {
+    const url = new URL(configuredUrl);
+    const localBackendHosts = ["backend", "localhost", "127.0.0.1"];
+    if (
+      !["http:", "https:"].includes(url.protocol)
+      || (
+        process.env.NODE_ENV === "production"
+        && url.protocol !== "https:"
+        && !localBackendHosts.includes(url.hostname)
+      )
+      || url.pathname !== "/"
+      || url.search
+      || url.hash
+    ) {
+      return null;
+    }
+    return url.origin;
+  } catch {
+    return null;
+  }
+}
+
 async function proxy(request: NextRequest, context: RouteContext) {
   const { path } = await context.params;
   const joinedPath = path.join("/");
+  const secureCookie = request.nextUrl.protocol === "https:"
+    || process.env.SESSION_COOKIE_SECURE === "true";
 
   if (joinedPath === "logout") {
     const response = NextResponse.json({ ok: true });
     response.cookies.set("cms_session", "", {
       httpOnly: true,
       sameSite: "lax",
-      secure: process.env.SESSION_COOKIE_SECURE === "true",
+      secure: secureCookie,
       path: "/",
       maxAge: 0,
     });
     return response;
   }
 
-  const backendUrl = (process.env.BACKEND_API_URL ?? "http://localhost:8080").replace(/\/+$/, "");
+  const backendUrl = getBackendUrl();
+  if (!backendUrl) {
+    return NextResponse.json(
+      { error: "BACKEND_API_URL must be set to the HTTPS origin of the CMS API" },
+      { status: 503 },
+    );
+  }
   const headers = new Headers();
   const contentType = request.headers.get("content-type");
   if (contentType) headers.set("content-type", contentType);
@@ -49,7 +84,7 @@ async function proxy(request: NextRequest, context: RouteContext) {
     response.cookies.set("cms_session", result.token, {
       httpOnly: true,
       sameSite: "lax",
-      secure: process.env.SESSION_COOKIE_SECURE === "true",
+      secure: secureCookie,
       path: "/",
       maxAge: secondsUntilExpiry,
     });
