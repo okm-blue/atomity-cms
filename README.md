@@ -153,6 +153,14 @@ npm run dev
 The frontend reads the backend URL from `BACKEND_API_URL`; `.env.local` is git-ignored. Local
 sign-in defaults are the same as the Docker stack.
 
+## AWS Amplify Hosting
+
+The root `amplify.yml` configures Amplify's **Deploy app** workflow for the Next.js app in
+`frontend/`. Select `frontend` as the monorepo app root when connecting the repository. Set the
+Amplify environment variables `BACKEND_API_URL` to your deployed backend's HTTPS origin and
+`SESSION_COOKIE_SECURE` to `true`. Amplify hosts the frontend; the Spring API and PostgreSQL
+database must already be reachable at that backend URL.
+
 ## Configuration
 
 | Variable | App | Description |
